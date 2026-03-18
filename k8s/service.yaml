@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-mcp
+  namespace: monitoring
+  labels:
+    app: opensearch-mcp
+spec:
+  type: ClusterIP
+  selector:
+    app: opensearch-mcp
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch-mcp
+  namespace: monitoring
+  labels:
+    app: opensearch-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch-mcp
+  template:
+    metadata:
+      labels:
+        app: opensearch-mcp
+    spec:
+      containers:
+        - name: opensearch-mcp
+          image: ghcr.io/piyushkumar-1/opensearch-mcp:sha-61a347c
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: ELASTICSEARCH_URL
+              value: "https://vpc-beckn-els-umnimsoscluwa32xyiafppi4rm.ap-south-1.es.amazonaws.com"
+            - name: PORT
+              value: "3000"
+            - name: ELASTICSEARCH_TLS_SKIP_VERIFY
+              value: "true"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
